@@ -122,45 +122,49 @@ const getAlunoStatus = function(status){
 
 }
 
-// função que retorna  lista de alunos matriculados em um curso especificado e com base em um status da disciplina Aprovado, Reprovado ou EXAME
-const getListaCursoStatus = function(curso, disciplina){
-        let entradaCurso = String(curso).toUpperCase()
-        let entradaDisciplina = String(disciplina).toUpperCase()
-        let dadosAlunos = listaDeAlunos.alunos
-        let statusTrueFalse = false
-        let listaAlunos = {
-            curso: entradaCurso,
-            status: entradaDisciplina,
-            alunos:[]
-        }
-        
-        dadosAlunos.forEach(function(valor){
-            let listaFinal = valor
-            let listaDisciplinas = []
-            listaFinal.curso.forEach(function(valorCurso){
-                let cursoAluno = valorCurso
-                if(String(cursoAluno.sigla).toUpperCase() == entradaCurso){
-                    valorCurso.disciplinas.forEach(function(valorDisciplina){
-                        if(String(valorDisciplina.status).toUpperCase() == entradaDisciplina){
-                            listaDisciplinas.push(valorDisciplina)
-                            statusTrueFalse = true      
-                        }
-                        cursoAluno.disciplinas = listaDisciplinas           
-                    })
-                    listaFinal.curso = cursoAluno   
-                    listaAlunos.alunos.push(listaFinal)
-                     
-                }
-            })
+// função que retorna lista de alunos matriculados em um curso especificado e com base em um status da disciplina Aprovado, Reprovado ou EXAME
+const getListaCursoStatus = function(curso, disciplina) {
+    let entradaCurso = String(curso).toUpperCase()
+    let entradaDisciplina = String(disciplina).toUpperCase()
+    let dadosAlunos = listaDeAlunos.alunos
+    let statusTrueFalse = false
+    let listaAlunos = {
+        curso: entradaCurso,
+        status: entradaDisciplina,
+        alunos: []
+    }
+
+    dadosAlunos.forEach(function(valor){
+        let listaFinal = valor
+        let listaDisciplinas = []
+
+        listaFinal.curso.forEach(function(valorCurso){
+            let cursoAluno = valorCurso
+
+            if(String(cursoAluno.sigla).toUpperCase() === entradaCurso){
+                cursoAluno.disciplinas.forEach(function(valorDisciplina){
+                    if (String(valorDisciplina.status).toUpperCase() === entradaDisciplina){
+                        listaDisciplinas.push(valorDisciplina)
+                        statusTrueFalse = true
+                    }
+                })
+
+                cursoAluno.disciplinas = listaDisciplinas
+            }
         })
-      
-    
+
         if(statusTrueFalse === true){
-            return listaAlunos
-        }else{
-            return statusTrueFalse
+            listaAlunos.alunos.push(listaFinal)
         }
+    })
+
+    if(statusTrueFalse === true){
+        return listaAlunos
+    }else{
+        return statusTrueFalse
+    }
 }
+
 
 // função que retorna a lista de alunos matriculados em um curso especificado e com base no ano de conclusão
 const getListaAlunosConclusao = function(curso, conclusao){
