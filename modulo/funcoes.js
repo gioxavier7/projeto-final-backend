@@ -98,7 +98,7 @@ const getAlunoCurso = function(sigla){
     }
 }
 
-// função que retorna os alunos através do status
+// função que retorna os alunos através do status (finalizado ou cursando)
 const getAlunoStatus = function(status){
     let dadosAlunos = listaDeAlunos.alunos
     let statusTrueFalse = false
@@ -122,27 +122,86 @@ const getAlunoStatus = function(status){
 
 }
 
-// função que retorna alunos matriculados em um curso especificado e com base no ano de conclusão 
-const getListaCursoStatus = function(curso, status){
-    dadosCursoStatus = listaDeAlunos.alunos
-    let cursoEscolhido = String(curso).toUpperCase()
-    let StatusEscolhido = String(status).toUpperCase()
-    let statusTrueFalse = false
-    let listaAlunos = {
-        matriculaAlunos: []
-    }
-
-    dadosCursoStatus.forEach(function(valor){
-        listaAlunos.matriculaAlunos.push(valor)
-
-        valor.curso.forEach(function(valorCurso){
-            listaAlunos.matriculaAlunos.push(valorCurso.sigla)
-
-            valorCurso.disciplinas.forEach(function(valor))
+// função que retorna  lista de alunos matriculados em um curso especificado e com base em um status da disciplina Aprovado, Reprovado ou EXAME
+const getListaCursoStatus = function(curso, disciplina){
+        let entradaCurso = String(curso).toUpperCase()
+        let entradaDisciplina = String(disciplina).toUpperCase()
+        let dadosAlunos = listaDeAlunos.alunos
+        let statusTrueFalse = false
+        let listaAlunos = {
+            curso: entradaCurso,
+            status: entradaDisciplina,
+            alunos:[]
+        }
+        
+        dadosAlunos.forEach(function(valor){
+            let listaFinal = valor
+            let listaDisciplinas = []
+            listaFinal.curso.forEach(function(valorCurso){
+                let cursoAluno = valorCurso
+                if(String(cursoAluno.sigla).toUpperCase() == entradaCurso){
+                    valorCurso.disciplinas.forEach(function(valorDisciplina){
+                        if(String(valorDisciplina.status).toUpperCase() == entradaDisciplina){
+                            listaDisciplinas.push(valorDisciplina)
+                            statusTrueFalse = true      
+                        }
+                        cursoAluno.disciplinas = listaDisciplinas           
+                    })
+                    listaFinal.curso = cursoAluno   
+                    listaAlunos.alunos.push(listaFinal)
+                     
+                }
+            })
         })
-    })
+      
+    
+        if(statusTrueFalse === true){
+            return listaAlunos
+        }else{
+            return statusTrueFalse
+        }
 }
 
+// função que retorna a lista de alunos matriculados em um curso especificado e com base no ano de conclusão
+const getListaAlunosConclusao = function(curso, conclusao){
+        let entradaCurso = String(curso).toUpperCase()
+        let entradaConclusao = Number(conclusao)
+        let dadosAlunos = listaDeAlunos.alunos
+        let status = false
+        let listaAlunos = {
+            curso: entradaCurso,
+            anoConclusao: entradaConclusao,
+            alunos:[]
+        }
+    
+        dadosAlunos.forEach(function(valor){
+            valor.curso.forEach(function(valorCurso){
+                if(String(valorCurso.sigla).toUpperCase() == entradaCurso && Number(valorCurso.conclusao) == entradaConclusao){
+                    listaAlunos.alunos.push(valor)
+                    status = true
+                }
+            })
+        })
+    
+        if(status === true){
+            return listaAlunos
+        }else{
+            return status
+        }
+}
+
+module.exports = {
+    getListaDeCursos,
+    getListaMatriculados,
+    getAluno,
+    getAlunoCurso,
+    getAlunoStatus,
+    getListaCursoStatus,
+    getListaAlunosConclusao
+}
+
+// console.log(getListaAlunosConclusao('ds', '2022'))
+// console.log(getListaCursoStatus('rds', 'exame'))
 // console.log(getAlunoStatus('finalizado'))
 // console.log(getAlunoCurso('ds'))
 // console.log(getAluno('20151001002'))
