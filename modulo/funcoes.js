@@ -184,8 +184,8 @@ const getListaCursoStatus = function(curso, statusDisciplina){
 }
 
 // Função que retorna os alunos matriculados em um curso específico e com base no ano de conclusão
-const getListaAlunosConclusao = function(siglaCurso, anoConclusao) {
-    let cursoSigla = String(siglaCurso).toUpperCase()
+const getListaAlunosConclusao = function(curso, anoConclusao) {
+    let cursoSigla = String(curso).toUpperCase()
     let ano = Number(anoConclusao)
     let dadosAlunos = listaDeAlunos.alunos
     let status = false
@@ -197,8 +197,8 @@ const getListaAlunosConclusao = function(siglaCurso, anoConclusao) {
     }
 
     dadosAlunos.forEach(function(aluno) {
-        aluno.curso.forEach(function(curso) {
-            if (String(curso.sigla).toUpperCase() === cursoSigla && Number(curso.conclusao) === ano) {
+        aluno.curso.forEach(function(cursoAluno) {
+            if (String(cursoAluno.sigla).toUpperCase() === cursoSigla && Number(cursoAluno.conclusao) === ano) {
                 listaResultado.alunos.push({
                     nome: aluno.nome,
                     matricula: aluno.matricula,
@@ -217,8 +217,6 @@ const getListaAlunosConclusao = function(siglaCurso, anoConclusao) {
         return false
     }
 }
-
-
 
 module.exports = {
     getListaDeCursos,
