@@ -123,75 +123,102 @@ const getAlunoStatus = function(status){
 }
 
 // função que retorna lista de alunos matriculados em um curso especificado e com base em um status da disciplina Aprovado, Reprovado ou EXAME
-const getListaCursoStatus = function(curso, disciplina) {
+const getListaCursoStatus = function(curso, statusDisciplina){
     let entradaCurso = String(curso).toUpperCase()
-    let entradaDisciplina = String(disciplina).toUpperCase()
+    let entradaStatus = String(statusDisciplina).toUpperCase()
     let dadosAlunos = listaDeAlunos.alunos
-    let listaAlunos = {
+    let listaFiltrada ={
         curso: entradaCurso,
-        status: entradaDisciplina,
+        status: entradaStatus,
         alunos: []
     }
-    let status = false;
+    let status = false
 
-    dadosAlunos.forEach(function(valor){
-        let listaFinal = valor
-        let listaDisciplinas = []
+    dadosAlunos.forEach(function(aluno){
+        let alunoFiltrado = {
+            nome: aluno.nome,
+            matricula: aluno.matricula,
+            sexo: aluno.sexo,
+            foto: aluno.foto,
+            cursos: []
+        }
+        let encontrouDisciplina = false
 
-        listaFinal.curso.forEach(function(valorCurso){
-            let cursoAluno = valorCurso;
+        aluno.curso.forEach(function(cursoAtual){
+            if(String(cursoAtual.sigla).toUpperCase() === entradaCurso){
+                let disciplinasFiltradas = []
 
-            if(String(cursoAluno.sigla).toUpperCase() === entradaCurso){
-                cursoAluno.disciplinas.forEach(function(valorDisciplina){
-                    if (String(valorDisciplina.status).toUpperCase() === entradaDisciplina){
-                        listaDisciplinas.push(valorDisciplina)
-                        status = true
+                cursoAtual.disciplinas.forEach(function(disciplina) {
+                    if(String(disciplina.status).toUpperCase() === entradaStatus){
+                        disciplinasFiltradas.push({
+                            nome: disciplina.nome,
+                            carga: disciplina.carga,
+                            media: disciplina.media,
+                            status: disciplina.status
+                        })
+                        encontrouDisciplina = true
                     }
                 })
 
-                cursoAluno.disciplinas = listaDisciplinas
+                if(disciplinasFiltradas.length > 0){
+                    alunoFiltrado.cursos.push({
+                        nome: cursoAtual.nome,
+                        sigla: cursoAtual.sigla,
+                        disciplinas: disciplinasFiltradas
+                    })
+                }
             }
         })
 
-        if(status === true){
-            listaAlunos.alunos.push(listaFinal)
+        if(encontrouDisciplina){
+            listaFiltrada.alunos.push(alunoFiltrado)
+            status = true
         }
     })
 
-    if(status === true){
-        return listaAlunos
+    if(status){
+        return listaFiltrada
     }else{
-        return status
+        return false
     }
 }
 
-// função que retorna a lista de alunos matriculados em um curso especificado e com base no ano de conclusão
-const getListaAlunosConclusao = function(curso, conclusao){
-        let entradaCurso = String(curso).toUpperCase()
-        let entradaConclusao = Number(conclusao)
-        let dadosAlunos = listaDeAlunos.alunos
-        let status = false
-        let listaAlunos = {
-            curso: entradaCurso,
-            anoConclusao: entradaConclusao,
-            alunos:[]
-        }
-    
-        dadosAlunos.forEach(function(valor){
-            valor.curso.forEach(function(valorCurso){
-                if(String(valorCurso.sigla).toUpperCase() == entradaCurso && Number(valorCurso.conclusao) == entradaConclusao){
-                    listaAlunos.alunos.push(valor)
-                    status = true
-                }
-            })
+// Função que retorna os alunos matriculados em um curso específico e com base no ano de conclusão
+const getListaAlunosConclusao = function(siglaCurso, anoConclusao) {
+    let cursoSigla = String(siglaCurso).toUpperCase()
+    let ano = Number(anoConclusao)
+    let dadosAlunos = listaDeAlunos.alunos
+    let status = false
+
+    let listaResultado = {
+        curso: cursoSigla,
+        anoDeConclusao: ano,
+        alunos: []
+    }
+
+    dadosAlunos.forEach(function(aluno) {
+        aluno.curso.forEach(function(curso) {
+            if (String(curso.sigla).toUpperCase() === cursoSigla && Number(curso.conclusao) === ano) {
+                listaResultado.alunos.push({
+                    nome: aluno.nome,
+                    matricula: aluno.matricula,
+                    sexo: aluno.sexo,
+                    foto: aluno.foto,
+                    cursos: aluno.curso
+                })
+                status = true
+            }
         })
-    
-        if(status === true){
-            return listaAlunos
-        }else{
-            return status
-        }
+    })
+
+    if (status === true) {
+        return listaResultado
+    } else {
+        return false
+    }
 }
+
+
 
 module.exports = {
     getListaDeCursos,
@@ -203,7 +230,7 @@ module.exports = {
     getListaAlunosConclusao
 }
 
-// console.log(getListaAlunosConclusao('ds', '2022'))
+// console.log(getListaAlunosConclusao('rds', '2021'))
 // console.log(getListaCursoStatus('rds', 'exame'))
 // console.log(getAlunoStatus('finalizado'))
 // console.log(getAlunoCurso('ds'))

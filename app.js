@@ -20,8 +20,6 @@ app.use((request, response, next) => {
 })
 
 const alunosCursos = require('./modulo/funcoes.js')
-const { log } = require('console')
-const { alunos } = require('./modulo/alunos.js')
 
 // endpoint dos filtros
 app.get('/v1/lion-school/alunos/filtro', cors(), async function (request, response){
